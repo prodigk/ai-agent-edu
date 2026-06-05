@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서비스 연결 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+        }
+        h1 {
+            color: #333; 
+            margin-bottom: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .status-ok {
+            color: green;
+            font-weight: bold;
+        }
+        .status-fail {
+            color: red;
+            font-weight: bold;
+        }
+        #test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 30px;
+            background-color: #e9ecef;
+            text-align: center;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ 서비스 연결 상태 확인</h1>
+        <p>아래 버튼을 눌러 각 서비스의 API 연결 가능 여부를 테스트하세요. (실제 테스트는 백엔드 로직이 필요합니다.)</p>
+
+        <!-- GitHub 테스트 영역 -->
+        <div class="test-section">
+            <h3>🔗 GitHub 연결</h3>
+            <button id="test-github">GitHub 연결 테스트 실행</button>
+            <p><strong>결과:</strong> <span id="github-result">테스트 전</span></p>
+        </div>
+
+        <!-- Cloud/AWS 등 다른 클라우드 서비스 테스트 영역 -->
+        <div class="test-section">
+            <h3>☁️ 클라우드 서비스 연결</h3>
+            <button id="test-cloud">클라우드 API 테스트 실행</button>
+            <p><strong>결과:</strong> <span id="cloud-result">테스트 전</span></p>
+        </div>
+
+        <!-- 전체 결과 표시 영역 -->
+        <div class="test-section" style="text-align: center;">
+            <h2>전체 요약</h2>
+            <button onclick="runAllTests()">모든 테스트 실행하기</button>
+            <div id="test-result">클릭하여 연결을 확인해주세요.</div>
+        </div>
+    </div>
+
+    <script>
+        // 이 자바스크립트 부분은 백엔드와 통신하는 역할을 합니다.
+        function updateStatus(elementId, statusText, isSuccess)
+        {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = statusText;
+                element.className = 'status-' + (isSuccess ? 'ok' : 'fail');
+            }
+        }
+        // ... (실제로는 여기서 fetch()를 사용하여 Python/Flask 서버에 API 호출을 해야 함)
+    </script>
+</body>
+</html>
