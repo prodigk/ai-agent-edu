@@ -1,10 +1,172 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>Hello World</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Breaker - Cyberpunk Brick Breaker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h1>Hello World</h1>
+<body class="theme-cyberpunk">
+    <div class="game-container">
+        <!-- Header: Title & Settings -->
+        <header class="game-header">
+            <div class="title-section">
+                <h1>NEON <span>BREAKER</span></h1>
+                <p>High-Fidelity Cyberpunk Brick Breaker</p>
+            </div>
+            <div class="settings-bar">
+                <button id="btn-mute" class="nav-btn" title="음소거 토글">
+                    <!-- Default sound icon (unmuted) -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats dashboard -->
+        <div class="dashboard">
+            <div class="stat-box">
+                <span class="label">최고 점수</span>
+                <span class="value" id="highScore">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="label">현재 점수</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="label">레벨</span>
+                <div style="display: flex; align-items: baseline; gap: 6px;">
+                    <span class="value" id="level">1</span>
+                    <span id="levelName" style="font-size: 0.75rem; color: var(--color-subtext); font-weight:600;">Neon Gateway</span>
+                </div>
+            </div>
+            <div class="stat-box">
+                <span class="label">생명</span>
+                <div id="livesContainer">
+                    <!-- Dynamic heart icons will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Power-up Badges -->
+        <div class="powerups-bar">
+            <div class="powerup-badge" id="badge-laser">
+                <span class="badge-icon">⚡</span>
+                <span>레이저</span>
+                <span class="badge-time" id="timer-laser">8s</span>
+            </div>
+            <div class="powerup-badge" id="badge-expand">
+                <span class="badge-icon">↔</span>
+                <span>패들 확장</span>
+                <span class="badge-time" id="timer-expand">10s</span>
+            </div>
+            <div class="powerup-badge" id="badge-slow">
+                <span class="badge-icon">▼</span>
+                <span>시간 감속</span>
+                <span class="badge-time" id="timer-slow">8s</span>
+            </div>
+            <div class="powerup-badge" id="badge-shield">
+                <span class="badge-icon">🛡️</span>
+                <span>하단 보호막</span>
+            </div>
+        </div>
+
+        <!-- Canvas and Screen overlays -->
+        <div class="game-area">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+            <!-- Screen 1: Start Game -->
+            <div id="screen-start" class="screen-overlay active">
+                <div class="screen-content">
+                    <h2>NEON BREAKER</h2>
+                    <p>화려한 특수 아이템과 레벨별 스피드 스케일링을 탑재한 네온 스타일 벽돌깨기 게임</p>
+
+                    <!-- Difficulty selector -->
+                    <div class="difficulty-selector">
+                        <div class="difficulty-label">난이도 선택</div>
+                        <div class="button-group">
+                            <button class="action-btn difficulty-btn" data-difficulty="easy">쉬움 (생명 5개)</button>
+                            <button class="action-btn difficulty-btn active" data-difficulty="normal">보통 (생명 3개)</button>
+                            <button class="action-btn difficulty-btn" data-difficulty="hard">어려움 (생명 2개)</button>
+                        </div>
+                    </div>
+
+                    <!-- Theme selection -->
+                    <div class="difficulty-selector">
+                        <div class="difficulty-label">비주얼 테마 선택</div>
+                        <div class="theme-picker">
+                            <div class="theme-option active" data-theme="cyberpunk" title="사이버펑크"></div>
+                            <div class="theme-option" data-theme="retro" title="레트로 아케이드"></div>
+                            <div class="theme-option" data-theme="pastel" title="파스텔 미니멀"></div>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard guide -->
+                    <div class="controls-guide">
+                        <h3>게임 조작법</h3>
+                        <div class="control-item">
+                            <span>패들 이동</span>
+                            <span><span class="key-badge">←</span> <span class="key-badge">→</span> 또는 <span class="key-badge">A</span> <span class="key-badge">D</span> / 마우스 이동</span>
+                        </div>
+                        <div class="control-item">
+                            <span>공 발사 / 레이저 슈팅</span>
+                            <span><span class="key-badge">Space</span> 또는 마우스 클릭 / 화면 터치</span>
+                        </div>
+                        <div class="control-item">
+                            <span>일시 정지</span>
+                            <span><span class="key-badge">ESC</span></span>
+                        </div>
+                    </div>
+
+                    <button id="btn-start" class="glow-btn">게임 시작</button>
+                </div>
+            </div>
+
+            <!-- Screen 2: Game Paused -->
+            <div id="screen-pause" class="screen-overlay">
+                <div class="screen-content">
+                    <h2>일시 정지됨</h2>
+                    <p>게임이 일시정지 되었습니다. 컨트롤을 재정비하고 게임을 이어가세요.</p>
+                    <div class="button-group" style="flex-direction: column; gap: 12px; width: 180px; margin: 0 auto;">
+                        <button id="btn-resume" class="glow-btn" style="width: 100%;">계속 하기</button>
+                        <button id="btn-restart-pause" class="action-btn" style="width: 100%; padding: 10px;">다시 시작</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Game Over -->
+            <div id="screen-gameover" class="screen-overlay">
+                <div class="screen-content">
+                    <h2>GAME OVER</h2>
+                    <p>모든 생명을 잃었습니다. 최고 점수를 갱신해 보세요!</p>
+                    <div class="score-highlight">
+                        <div class="label">최종 획득 점수</div>
+                        <div class="final-val" id="final-score">0</div>
+                    </div>
+                    <button id="btn-restart-gameover" class="glow-btn">다시 도전하기</button>
+                </div>
+            </div>
+
+            <!-- Screen 4: Level Cleared -->
+            <div id="screen-levelcomplete" class="screen-overlay">
+                <div class="screen-content">
+                    <h2>LEVEL CLEARED</h2>
+                    <p><span id="cleared-level-name" style="color:var(--color-primary); font-weight:700;">Level Name</span> 완료!</p>
+                    <div class="score-highlight">
+                        <div class="label">레벨 보너스 점수</div>
+                        <div class="final-val" id="level-bonus" style="color: var(--color-primary); text-shadow: var(--glow-text);">0</div>
+                    </div>
+                    <button id="btn-next-level" class="glow-btn">다음 레벨</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts (Traditional execution to support file:// protocol beautifully) -->
+    <script src="levels.js"></script>
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
